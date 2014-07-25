@@ -26,10 +26,6 @@ HashTable.prototype.retrieve = function(k){
     var currentnode = this._storage.get(i).head;
      while(currentnode)
     {
-// console.log(currentnode.value + " k: " + k);
-
-
-
       if(currentnode.key === k)
       {
        result = currentnode.value;
@@ -46,24 +42,28 @@ HashTable.prototype.retrieve = function(k){
 HashTable.prototype.remove = function(k){
 var i = getIndexBelowMaxForKey(k, this._limit);
 var currentnode = this._storage.get(i).head;
-var prevnode = null;
-while(currentnode){
-  console.log(currentnode.value + " k: " + k);
-  if(currentnode.key === k){
-    if(currentnode.value === k)
-    {
-    var temp = currentnode.next;
-    delete currentnode;
-    //currentnode.next = null;
-
-    if(prevnode)
-    {
-     prevnode.next = temp;
-    }
- }
-  }
-  prevnode = currentnode;
+var prevnode = currentnode;
+if(currentnode.key === k){
+  this._storage.get(i).head = null;
+  this._storage.get(i).tail = null;
+}else{
   currentnode = currentnode.next;
+  while(currentnode){
+    // console.log(currentnode.value + " k: " + k);
+    if(currentnode.key === k){
+      var temp = currentnode.next;
+      // delete currentnode;
+      //currentnode.next = null;
+      prenode.next = temp;
+
+      if(prevnode)
+      {
+       prevnode.next = temp;
+      }
+    }
+    prevnode = currentnode;
+    currentnode = currentnode.next;
+  }
 }
 
 };
