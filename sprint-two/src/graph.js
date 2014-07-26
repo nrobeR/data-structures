@@ -7,49 +7,37 @@ var Graph = function(){
 
 Graph.prototype.addNode = function(newNode, toNode){
   if(!this.allNodes[newNode]){
+    var tempNode = createNode(newNode);
+    if(this.firstNode === undefined){
+      this.firstNode = tempNode;
+    }
+    this.allNodes[newNode] = tempNode;
 
+    if(this.count === 1)
+    {
+      this.addEdge(newNode,this.firstNode.value);
+    }
 
-var tempNode = createNode(newNode);
+    if(toNode){
+      this.addEdge(newNode,toNode);
+    }
 
-this.allNodes[newNode] = tempNode;
-
-
- if(toNode){
-  // console.log("triggered");
-    this.addEdge(newNode,toNode);
+    this.count++;
   }
-
-
-
-
-
-
-
-if(this.count === 1)
-{
-  for(var key in this.allNodes)
-  {
-   //console.log("triggered");
-this.addEdge(newNode , key);
-//console.log(this.allNodes[newNode]);
-  }
-}
-
-this.count++;
-}};
+};
 
 Graph.prototype.contains = function(node){
-if(this.allNodes[node])
-{
-  return true;
-}
-return false;
+  if(this.allNodes[node])
+  {
+    return true;
+  }
+  return false;
 };
 
 Graph.prototype.removeNode = function(node){
   if(this.allNodes[node])
   {
-     this.count--;
+    this.count--;
     delete this.allNodes[node];
   }
 };
@@ -57,51 +45,53 @@ Graph.prototype.removeNode = function(node){
 Graph.prototype.getEdge = function(fromNode, toNode){
 
   var result = false;
-if(this.allNodes[fromNode] && this.allNodes[toNode])
-{
-  // console.log("Get EDGE BEGIN: fromNode: " +fromNode + " toNode: " + toNode);
-    // console.log(this.allNodes[fromNode]);
-      if(this.allNodes[fromNode].edges[toNode]){
-    //    console.log("getEdgeTriggered");
-            result = true;}
-}
-return result;
+  if(this.allNodes[fromNode] && this.allNodes[toNode])
+  {
+    if(this.allNodes[fromNode].edges[toNode]){
+      result = true;
+    }
+  }
+  return result;
 
 };
 
 Graph.prototype.addEdge = function(fromNode, toNode){
 
   if(this.allNodes[fromNode] && this.allNodes[toNode])
-{
-this.allNodes[fromNode].edges[toNode] = toNode;
-this.allNodes[toNode].edges[fromNode] = fromNode;
-//console.log(fromNode.edges[toNode]);
-}
+  {
+    this.allNodes[fromNode].edges[toNode] = toNode;
+    this.allNodes[toNode].edges[fromNode] = fromNode;
+  }
 };
 
 Graph.prototype.removeEdge = function(fromNode, toNode){
   if(this.allNodes[fromNode]&&this.allNodes[toNode]){
+
     delete this.allNodes[fromNode].edges[toNode];
+    console.log("before: " + this.allNodes[toNode].edges[fromNode]);
     delete this.allNodes[toNode].edges[fromNode];
+    for(var key in this.allNodes[toNode].edges){
+      console.log(toNode);
+      console.log(key);
+    }
   }
-  console.log(this.allNodes[fromNode].edges);
   if(isEmpty(this.allNodes[fromNode].edges)){
-    delete this.allNodes[fromNode];
-    console.log(this.allNodes[fromNode]);
+    this.removeNode(fromNode);
   }
+
   if(isEmpty(this.allNodes[toNode].edges)){
-    delete this.allNodes[toNode];
+    this.removeNode(toNode);
   }
 };
 
-function isEmpty(obj) {
-    for(var prop in obj) {
-        if(obj.hasOwnProperty(prop))
-            return false;
+var isEmpty = function(obj){
+  for(var key in obj){
+    if(obj.hasOwnProperty(key)){
+      return false;
     }
-
-    return true;
-}
+  }
+  return true;
+};
 
 
 var createNode = function(value){
